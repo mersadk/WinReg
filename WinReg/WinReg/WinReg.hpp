@@ -4,11 +4,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//				***  VS2010-compatible C++ Wrappers      ***
-//				***  around Windows Registry C API       ***
+//              ***  VS2010-compatible C++ Wrappers      ***
+//              ***  around Windows Registry C API       ***
 // 
 //                 Copyright (C) by Giovanni Dicanio 
-//  
+// 
+// Last update: 2018, March 8th
+// 
 // E-mail: <giovanni.dicanio AT gmail.com>
 // 
 // Registry key handles are safely and conveniently wrapped 
