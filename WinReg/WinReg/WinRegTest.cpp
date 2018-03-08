@@ -21,8 +21,8 @@ using namespace winreg;
 
 int main()
 {
-    constexpr int kExitOk = 0;
-    constexpr int kExitError = 1;
+    static const int kExitOk = 0;
+    static const int kExitError = 1;
 
     try 
     {
@@ -35,21 +35,21 @@ int main()
         // 
 
         const wstring testSubKey = L"SOFTWARE\\GioTest";
-        RegKey key{ HKEY_CURRENT_USER, testSubKey };    
-        
+        RegKey key( HKEY_CURRENT_USER, testSubKey );    
+
         vector<wstring> subKeyNames = key.EnumSubKeys();
         wcout << L"Subkeys:\n";
-        for (const auto& s : subKeyNames)
+        for (auto it = subKeyNames.cbegin(); it != subKeyNames.cend(); ++it)
         {
-            wcout << L"  [" << s << L"]\n";
+            wcout << L"  [" << (*it) << L"]\n";
         }
         wcout << L'\n';
 
         vector<pair<wstring, DWORD>> values = key.EnumValues();
         wcout << L"Values:\n";
-        for (const auto& v : values)
+        for (auto it = values.cbegin(); it != values.cend(); ++it)
         {
-            wcout << L"  [" << v.first << L"](" << RegKey::RegTypeToString(v.second) << L")\n";
+            wcout << L"  [" << it->first << L"](" << RegKey::RegTypeToString(it->second) << L")\n";
         }
         wcout << L'\n';
 
@@ -59,15 +59,19 @@ int main()
         //
         // Test SetXxxValue and GetXxxValue methods
         // 
-        
+
         key.Open(HKEY_CURRENT_USER, testSubKey);
-        
+
         const DWORD testDw = 0x1234ABCD;
         const ULONGLONG testQw = 0xAABBCCDD11223344;
         const wstring testSz = L"CiaoTestSz";
         const wstring testExpandSz = L"%PATH%";
-        const vector<BYTE> testBinary{0xAA, 0xBB, 0xCC, 0x11, 0x22, 0x33};
-        const vector<wstring> testMultiSz{ L"Hi", L"Hello", L"Ciao" };
+
+        const BYTE testBinaryInit[] = {0xAA, 0xBB, 0xCC, 0x11, 0x22, 0x33};
+        const vector<BYTE> testBinary(testBinaryInit, testBinaryInit + _countof(testBinaryInit));
+        
+        const wchar_t* testMultiSzInit[] = {L"Hi", L"Hello", L"Ciao"};
+        const vector<wstring> testMultiSz(testMultiSzInit, testMultiSzInit + _countof(testMultiSzInit));
 
         key.SetDwordValue(L"TestValueDword", testDw);
         key.SetQwordValue(L"TestValueQword", testQw);
@@ -152,7 +156,7 @@ int main()
         //
         // Remove some test values
         //
-        
+
         key.DeleteValue(L"TestValueDword");
         key.DeleteValue(L"TestValueQword");
         key.DeleteValue(L"TestValueString");

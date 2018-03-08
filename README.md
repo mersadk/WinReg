@@ -1,4 +1,4 @@
-# WinReg v1.1
+# WinReg v1.1A
 ## High-level C++ Wrappers Around Low-level Windows Registry C-interface APIs
 
 by Giovanni Dicanio
@@ -23,9 +23,17 @@ The Win32 registry value types are mapped to C++ higher-level types according th
 | `REG_BINARY`         | `std::vector<BYTE>`          |
 
 
-I developed this code using **Visual Studio 2015 with Update 3**. The code compiles cleanly at `/W4` in both 32-bit and 64-bit builds.
+I initially developed this code using Visual Studio 2015 with Update 3. 
+Then, in this branch, I added **support for Visual Studio 2010 with SP1**, removing some C++11/14 features from
+the WinReg code, to make it compilable with VS2010.
 
-The library's code is contained in a **reusable** _header-only_ [`WinReg.hpp`](../master/WinReg/WinReg/WinReg.hpp) file.
+For example: instead of `constexpr`, I used `static const` for declaring compile-time constants.
+Moreover, to ban copy I declared a private copy constructor and copy assignment operator, instead of using the C++11 `=delete` syntax, which isn't available in VS2010.
+And so on.
+
+The code compiles cleanly at `/W4` in both 32-bit and 64-bit builds. 
+
+The library's code is contained in a **reusable** _header-only_ [`WinReg.hpp`](../vs2010-support/WinReg/WinReg/WinReg.hpp) file.
 
 `WinRegTest.cpp` contains some demo/test code for the library: check it out for some sample usage.
 
@@ -52,4 +60,4 @@ auto values = key.EnumValues();
  
 The library stuff lives under the `winreg` namespace.
 
-See the [**`WinReg.hpp`**](../master/WinReg/WinReg/WinReg.hpp) header for more details and **documentation**.
+See the [**`WinReg.hpp`**](../vs2010-support/WinReg/WinReg/WinReg.hpp) header for more details and **documentation**.
