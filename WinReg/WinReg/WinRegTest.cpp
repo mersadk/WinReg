@@ -18,6 +18,13 @@
 using namespace std;
 using namespace winreg;
 
+#ifdef UNICODE
+	#define REG_COUT wcout
+#else
+	#define REG_COUT cout
+#endif // UNICODE
+
+
 
 int main()
 {
@@ -26,32 +33,32 @@ int main()
 
     try 
     {
-        wcout << L"=========================================\n";
-        wcout << L"*** Testing Giovanni Dicanio's WinReg ***\n";
-        wcout << L"=========================================\n\n";
+        REG_COUT << _T("=========================================\n");
+        REG_COUT << _T("*** Testing Giovanni Dicanio's WinReg ***\n");
+        REG_COUT << _T("=========================================\n\n");
 
         //
         // Test subkey and value enumeration
         // 
 
-        const wstring testSubKey = L"SOFTWARE\\GioTest";
+        const tstring testSubKey = _T("SOFTWARE\\GioTest");
         RegKey key{ HKEY_CURRENT_USER, testSubKey };    
         
-        vector<wstring> subKeyNames = key.EnumSubKeys();
-        wcout << L"Subkeys:\n";
+        vector<tstring> subKeyNames = key.EnumSubKeys();
+        REG_COUT << _T("Subkeys:\n");
         for (const auto& s : subKeyNames)
         {
-            wcout << L"  [" << s << L"]\n";
+            REG_COUT << _T("  [") << s << _T("]\n");
         }
-        wcout << L'\n';
+        REG_COUT << _T('\n');
 
-        vector<pair<wstring, DWORD>> values = key.EnumValues();
-        wcout << L"Values:\n";
+        vector<pair<tstring, DWORD>> values = key.EnumValues();
+        REG_COUT << _T("Values:\n");
         for (const auto& v : values)
         {
-            wcout << L"  [" << v.first << L"](" << RegKey::RegTypeToString(v.second) << L")\n";
+            REG_COUT << _T("  [") << v.first << _T("](") << RegKey::RegTypeToString(v.second) << _T(")\n");
         }
-        wcout << L'\n';
+        REG_COUT << _T('\n');
 
         key.Close();
 
@@ -64,88 +71,88 @@ int main()
         
         const DWORD testDw = 0x1234ABCD;
         const ULONGLONG testQw = 0xAABBCCDD11223344;
-        const wstring testSz = L"CiaoTestSz";
-        const wstring testExpandSz = L"%PATH%";
+        const tstring testSz = _T("CiaoTestSz");
+        const tstring testExpandSz = _T("%PATH%");
         const vector<BYTE> testBinary{0xAA, 0xBB, 0xCC, 0x11, 0x22, 0x33};
-        const vector<wstring> testMultiSz{ L"Hi", L"Hello", L"Ciao" };
+        const vector<tstring> testMultiSz{ _T("Hi"), _T("Hello"), _T("Ciao") };
 
-        key.SetDwordValue(L"TestValueDword", testDw);
-        key.SetQwordValue(L"TestValueQword", testQw);
-        key.SetStringValue(L"TestValueString", testSz);
-        key.SetExpandStringValue(L"TestValueExpandString", testExpandSz);
-        key.SetMultiStringValue(L"TestValueMultiString", testMultiSz);
-        key.SetBinaryValue(L"TestValueBinary", testBinary);
+        key.SetDwordValue(_T("TestValueDword"), testDw);
+        key.SetQwordValue(_T("TestValueQword"), testQw);
+        key.SetStringValue(_T("TestValueString"), testSz);
+        key.SetExpandStringValue(_T("TestValueExpandString"), testExpandSz);
+        key.SetMultiStringValue(_T("TestValueMultiString"), testMultiSz);
+        key.SetBinaryValue(_T("TestValueBinary"), testBinary);
 
-        DWORD testDw1 = key.GetDwordValue(L"TestValueDword");
+        DWORD testDw1 = key.GetDwordValue(_T("TestValueDword"));
         if (testDw1 != testDw) 
         {
-            wcout << L"RegKey::GetDwordValue failed.\n";
+            REG_COUT << _T("RegKey::GetDwordValue failed.\n");
         }
 
-        DWORD typeId = key.QueryValueType(L"TestValueDword");
+        DWORD typeId = key.QueryValueType(_T("TestValueDword"));
         if (typeId != REG_DWORD)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_DWORD.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_DWORD.\n");
         }
 
-        ULONGLONG testQw1 = key.GetQwordValue(L"TestValueQword");
+        ULONGLONG testQw1 = key.GetQwordValue(_T("TestValueQword"));
         if (testQw1 != testQw)
         {
-            wcout << L"RegKey::GetQwordValue failed.\n";
+            REG_COUT << _T("RegKey::GetQwordValue failed.\n");
         }
 
-        typeId = key.QueryValueType(L"TestValueQword");
+        typeId = key.QueryValueType(_T("TestValueQword"));
         if (typeId != REG_QWORD)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_QWORD.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_QWORD.\n");
         }
 
-        wstring testSz1 = key.GetStringValue(L"TestValueString");
+        tstring testSz1 = key.GetStringValue(_T("TestValueString"));
         if (testSz1 != testSz) 
         {
-            wcout << L"RegKey::GetStringValue failed.\n";
+            REG_COUT << _T("RegKey::GetStringValue failed.\n");
         }
 
-        typeId = key.QueryValueType(L"TestValueString");
+        typeId = key.QueryValueType(_T("TestValueString"));
         if (typeId != REG_SZ)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_SZ.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_SZ.\n");
         }
 
-        wstring testExpandSz1 = key.GetExpandStringValue(L"TestValueExpandString");
+        tstring testExpandSz1 = key.GetExpandStringValue(_T("TestValueExpandString"));
         if (testExpandSz1 != testExpandSz)
         {
-            wcout << L"RegKey::GetExpandStringValue failed.\n";
+            REG_COUT << _T("RegKey::GetExpandStringValue failed.\n");
         }
 
-        typeId = key.QueryValueType(L"TestValueExpandString");
+        typeId = key.QueryValueType(_T("TestValueExpandString"));
         if (typeId != REG_EXPAND_SZ)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_EXPAND_SZ.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_EXPAND_SZ.\n");
         }
 
-        vector<wstring> testMultiSz1 = key.GetMultiStringValue(L"TestValueMultiString");
+        vector<tstring> testMultiSz1 = key.GetMultiStringValue(_T("TestValueMultiString"));
         if (testMultiSz1 != testMultiSz)
         {
-            wcout << L"RegKey::GetMultiStringValue failed.\n";
+            REG_COUT << _T("RegKey::GetMultiStringValue failed.\n");
         }
 
-        typeId = key.QueryValueType(L"TestValueMultiString");
+        typeId = key.QueryValueType(_T("TestValueMultiString"));
         if (typeId != REG_MULTI_SZ)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_MULTI_SZ.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_MULTI_SZ.\n");
         }
 
-        vector<BYTE> testBinary1 = key.GetBinaryValue(L"TestValueBinary");
+        vector<BYTE> testBinary1 = key.GetBinaryValue(_T("TestValueBinary"));
         if (testBinary1 != testBinary)
         {
-            wcout << L"RegKey::GetBinaryValue failed.\n";
+            REG_COUT << _T("RegKey::GetBinaryValue failed.\n");
         }
 
-        typeId = key.QueryValueType(L"TestValueBinary");
+        typeId = key.QueryValueType(_T("TestValueBinary"));
         if (typeId != REG_BINARY)
         {
-            wcout << L"RegKey::QueryValueType failed for REG_BINARY.\n";
+            REG_COUT << _T("RegKey::QueryValueType failed for REG_BINARY.\n");
         }
 
 
@@ -153,14 +160,14 @@ int main()
         // Remove some test values
         //
         
-        key.DeleteValue(L"TestValueDword");
-        key.DeleteValue(L"TestValueQword");
-        key.DeleteValue(L"TestValueString");
-        key.DeleteValue(L"TestValueExpandString");
-        key.DeleteValue(L"TestValueMultiString");
-        key.DeleteValue(L"TestValueBinary");
+        key.DeleteValue(_T("TestValueDword"));
+        key.DeleteValue(_T("TestValueQword"));
+        key.DeleteValue(_T("TestValueString"));
+        key.DeleteValue(_T("TestValueExpandString"));
+        key.DeleteValue(_T("TestValueMultiString"));
+        key.DeleteValue(_T("TestValueBinary"));
 
-        wcout << L"All right!! :)\n\n";
+        REG_COUT << _T("All right!! :)\n\n");
     }
     catch (const RegException& e)
     {
